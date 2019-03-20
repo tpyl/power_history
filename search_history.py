@@ -90,6 +90,7 @@ if __name__ == "__main__":
 
         if ch=='\r':
             clear(prev_candidates + 1)
+            printe(candidates[selected])
             print(candidates[selected])
             sys.exit(0)
         elif ord(ch) == 127:
