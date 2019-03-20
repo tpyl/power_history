@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import sys, tty, termios, shutil
+from os.path import expanduser
+
 
 def getch():
     """
@@ -50,7 +52,8 @@ def clear(n: int):
 
 if __name__ == "__main__":
     # Load command history, latest command at the top of the list
-    cmds = list(reversed([line.strip() for line in open('/home/timo/.bash_history')]))
+    home_dir = expanduser("~")
+    cmds = list(reversed([line.strip() for line in open(home_dir + '/.bash_history')]))
 
     prev_candidates = 0
     if len(sys.argv) > 1:
