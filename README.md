@@ -34,3 +34,17 @@ PS1="\n\[\033[40m\]\[\e[1;36m\]\t \[\e[1;30m\][\[\e[1;34m\]\u@\H\[\e[1;30m\]:\[\
 ![](screenshot.png)
 
 
+The green text is what I typed to search the command history. The line
+with cyan background is the selected command from the history. You can
+use arrow keys to move up and down the list. Up to 6 matching entries 
+are displayed, but you can scroll up and down through all the matches. 
+
+If you type more characters, the selection will reset to the top match 
+(at least for now). Once you press enter, the selected command will be 
+executed. You can bail out with ESC.
+
+TODO: Other special keys may really mess up the printout and history. 
+This may be fixed in a future version.
+
+
+

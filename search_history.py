@@ -103,11 +103,11 @@ if __name__ == "__main__":
             # Up arrow1
             elif ord(code) == 65:
                 selected -= 1
+        elif ord(ch) == 96:
+            clear(prev_candidates+1)
+            sys.exit(-1)
         elif ch.isprintable():
             input_buf.append(ch)
             # TODO: Attempt to preserve selected location
             selected = 0
        
-
-
-
