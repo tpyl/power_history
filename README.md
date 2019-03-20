@@ -47,4 +47,7 @@ TODO: Other special keys may really mess up the printout and history.
 This may be fixed in a future version.
 
 
+## Installation
+
+Simply clone this repository and run `install.sh`
 
