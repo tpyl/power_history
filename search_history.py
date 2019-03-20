@@ -53,7 +53,10 @@ if __name__ == "__main__":
     cmds = list(reversed([line.strip() for line in open('/home/timo/.bash_history')]))
 
     prev_candidates = 0
-    term_width = shutil.get_terminal_size((80, 20))[0] - 1
+    if len(sys.argv) > 1:
+        term_width = int(sys.argv[1])
+    else:
+        term_width = shutil.get_terminal_size().columns
     selected = 0
     input_buf = []
     move_up(1)
