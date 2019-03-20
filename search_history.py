@@ -86,7 +86,8 @@ if __name__ == "__main__":
         move_up(prev_candidates + 1)
         sys.stderr.flush()
 
-        ch = getch();
+        ch = getch()
+
         if ch=='\r':
             clear(prev_candidates + 1)
             print(candidates[selected])
@@ -95,19 +96,20 @@ if __name__ == "__main__":
             input_buf = input_buf[:-1]
             # TODO: Attempt to preserve selected location
             selected = 0
-        elif ord(ch) == 91:
+        elif ord(ch) == 27:
             code = getch()
+            if ord(code) == 91:
+                code = getch()
             # Down arrow
             if ord(code) == 66:
                 selected += 1
             # Up arrow1
             elif ord(code) == 65:
                 selected -= 1
-        elif ord(ch) == 96:
-            clear(prev_candidates+1)
-            sys.exit(-1)
+            else:
+                clear(prev_candidates+1)
+                sys.exit(-1)
         elif ch.isprintable():
             input_buf.append(ch)
             # TODO: Attempt to preserve selected location
             selected = 0
-       
