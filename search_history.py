@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import sys, tty, termios, shutil
+from os.path import expanduser, join
+
 
 def getch():
     """
@@ -51,10 +53,11 @@ def clear(n: int):
 
 if __name__ == "__main__":
     # Load command history, latest command at the top of the list
+    home_dir = expanduser("~")
     cmds = list(
             filter(
                 lambda x: len(x) > 0, reversed(
-                    [line.strip() for line in open('/home/timo/.bash_history')]
+                    [line.strip() for line in open(join(home_dir, ".bash_history"))]
                     )
                 )
             )

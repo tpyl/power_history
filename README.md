@@ -40,9 +40,11 @@ use arrow keys to move up and down the list. Up to 6 matching entries
 are displayed, but you can scroll up and down through all the matches. 
 
 If you type more characters, the selection will reset to the top match 
-(at least for now). Once you press enter, the selected command will be 
-executed. You can bail out with ESC + most keys... 
-(ESC-ESC is a good one)
+(at least for now). Once you press enter, the selected command will 
+be placed on your prompt for editing. Any number of keys not understood 
+by the search tool will bail out: ESC-ESC, right arrow, etc... 
+Bailing out, unfortunately, introduces an empty command into your 
+command history. 
 
 TODO: Other special keys may really mess up the printout and history. 
 This may be fixed in a future version.
