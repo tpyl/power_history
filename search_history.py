@@ -37,7 +37,8 @@ def move_up(n: int):
     """
     Moves the cursor up by n lines
     """
-    printe("\x1B[%dA"%n, end="")
+    if n > 0:
+        printe("\x1B[%dA"%n, end="")
 
 def clear(n: int):
     """
@@ -50,21 +51,26 @@ def clear(n: int):
 
 if __name__ == "__main__":
     # Load command history, latest command at the top of the list
-    cmds = list(reversed([line.strip() for line in open('/home/timo/.bash_history')]))
+    cmds = list(
+            filter(
+                lambda x: len(x) > 0, reversed(
+                    [line.strip() for line in open('/home/timo/.bash_history')]
+                    )
+                )
+            )
 
     prev_candidates = 0
     if len(sys.argv) > 1:
-        term_width = int(sys.argv[1])
+        term_width = int(sys.argv[1]) - 2
     else:
-        term_width = shutil.get_terminal_size().columns
+        term_width = shutil.get_terminal_size().columns - 2
     selected = 0
     input_buf = []
     move_up(1)
     printe("\x1B[K")
+    offset = 0
 
     while True:
-        # Print current input buffer in green
-        printe("\x1B[K\r\x1B[32;1m%s\x1B[0m" % ''.join(input_buf))
 
         # Find matching commands from history
         candidates = filter_candidates(cmds, ''.join(input_buf))
@@ -75,20 +81,27 @@ if __name__ == "__main__":
         end_idx = min(len(candidates), start_idx + 6)
 
         # Clear out previously printed alternatives
+        printe("")
         clear(prev_candidates)
 
         # Print out current alternatives
         prev_candidates = end_idx - start_idx
+        if offset < 0:
+            offset = 0
+        if candidates and offset + term_width > len(candidates[selected]):
+            offset = max(0, len(candidates[selected]) - term_width)
+
         for idx in range(start_idx, end_idx):
             if idx == selected:
-                printe("\x1B[46m%s\x1B[0m\x1B[K" % candidates[idx][:term_width])
+                printe("\x1B[46m%s\x1B[0m\x1B[K" % candidates[idx][offset:offset+term_width])
             else:
-                printe(candidates[idx][:term_width] + "\x1B[K")
+                printe(candidates[idx][offset:offset+term_width] + "\x1B[K")
 
         # Return cursor to starting position
         move_up(prev_candidates + 1)
         sys.stderr.flush()
-
+        # Print current input buffer in green
+        printe("\x1B[K\r(hist search): \x1B[32;1m%s\x1B[0m" % ''.join(input_buf), end="")
         ch = getch()
 
         if ch=='\r':
@@ -110,6 +123,10 @@ if __name__ == "__main__":
             # Up arrow1
             elif ord(code) == 65:
                 selected -= 1
+            elif ord(code) == 67:
+                offset += 1
+            elif ord(code) == 68:
+                offset -= 1
             else:
                 clear(prev_candidates+1)
                 sys.exit(-1)
