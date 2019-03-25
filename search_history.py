@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, tty, termios, shutil
-from os.path import expanduser, join
+import os, sys, tty, termios, shutil
 
 
 def getch():
@@ -10,7 +9,7 @@ def getch():
     """
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
-    try: 
+    try:
         tty.setraw(sys.stdin.fileno())
         ch = sys.stdin.read(1)
     finally:
@@ -29,18 +28,20 @@ def filter_candidates(candidates: list, usr_input: str):
     return [x for x in with_dups if not (x in seen or seen.add(x))]
 
 
-def printe(s:str, end="\n"):
+def printe(s: str, end="\n"):
     """
     Print to stderr
     """
     sys.stderr.write(s + end)
+
 
 def move_up(n: int):
     """
     Moves the cursor up by n lines
     """
     if n > 0:
-        printe("\x1B[%dA"%n, end="")
+        printe("\x1B[%dA" % n, end="")
+
 
 def clear(n: int):
     """
@@ -53,14 +54,13 @@ def clear(n: int):
 
 if __name__ == "__main__":
     # Load command history, latest command at the top of the list
-    home_dir = expanduser("~")
     cmds = list(
-            filter(
-                lambda x: len(x) > 0, reversed(
-                    [line.strip() for line in open(join(home_dir, ".bash_history"))]
-                    )
-                )
+        filter(
+            lambda x: len(x) > 0, reversed(
+                [line.strip() for line in open(os.getenv('HISTFILE', os.path.expanduser("~/.bash_history")))]
             )
+        )
+    )
 
     prev_candidates = 0
     if len(sys.argv) > 1:
@@ -79,8 +79,8 @@ if __name__ == "__main__":
         candidates = filter_candidates(cmds, ''.join(input_buf))
 
         # Clip selected command to bounds
-        selected = max(0, min(len(candidates) -1, selected))
-        start_idx = max(0, selected-3);
+        selected = max(0, min(len(candidates) - 1, selected))
+        start_idx = max(0, selected - 3);
         end_idx = min(len(candidates), start_idx + 6)
 
         # Clear out previously printed alternatives
@@ -96,9 +96,9 @@ if __name__ == "__main__":
 
         for idx in range(start_idx, end_idx):
             if idx == selected:
-                printe("\x1B[46m%s\x1B[0m\x1B[K" % candidates[idx][offset:offset+term_width])
+                printe("\x1B[46m%s\x1B[0m\x1B[K" % candidates[idx][offset:offset + term_width])
             else:
-                printe(candidates[idx][offset:offset+term_width] + "\x1B[K")
+                printe(candidates[idx][offset:offset + term_width] + "\x1B[K")
 
         # Return cursor to starting position
         move_up(prev_candidates + 1)
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         printe("\x1B[K\r(hist search): \x1B[32;1m%s\x1B[0m" % ''.join(input_buf), end="")
         ch = getch()
 
-        if ch=='\r':
+        if ch == '\r':
             clear(prev_candidates + 1)
             printe(candidates[selected])
             print(candidates[selected])
@@ -131,7 +131,7 @@ if __name__ == "__main__":
             elif ord(code) == 68:
                 offset -= 1
             else:
-                clear(prev_candidates+1)
+                clear(prev_candidates + 1)
                 sys.exit(-1)
         elif ch.isprintable():
             input_buf.append(ch)
